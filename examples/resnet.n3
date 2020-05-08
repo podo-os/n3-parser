@@ -1,0 +1,20 @@
+[ResNet18 DepthNet]
+  [Conv2d]
+    * K: kernel size = 3
+    * S: stride = 1
+
+  [Max Pooling]
+    * K: kernel size = 2
+
+  [ResidualBlock]
+    #1 Conv2d + BatchNorm + ReLU
+    #2 Conv2d + BatchNorm
+
+  #0 Input RGB image = 3, H, W
+
+  #1 [Depth Encoder]
+    #1 Conv2d (K=7, S=2) + BatchNorm + ReLU = 64, H/2, W/2
+    #2 Conv2d + BatchNorm + ReLU = 64, H/2, W/2
+    #3 ResidualBlock (#2) *2 = 64, H/2, W/2
+    #4 Max Pooling = 64, H/4, W/4
+    #5 ResidualBlock (#3 + #2) *2 = 128, H/4, W/4

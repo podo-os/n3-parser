@@ -1,0 +1,158 @@
+use crate::ast;
+use crate::error::LexicalError;
+use crate::lexer;
+use crate::location;
+
+grammar;
+
+pub InputFile: ast::Model = StartFile <m:Model> => m;
+
+Model: ast::Model = "[" <n:name+> "]" "\n" <i:ModelInner> => ast::Model {
+    name: n.join(" "),
+    inner: i,
+};
+
+ModelInner: ast::ModelInner = {
+    Indent <v:Variable*> <c:Model*> <g:Graph*> Dedent => ast::ModelInner {
+        variables: v,
+        children: c,
+        graph: g,
+    },
+    => ast::ModelInner::default(),
+}
+
+Variable: ast::Variable = "*" <n:name> ":" <d:name+> <v:MaybeValue> "\n" => ast::Variable {
+    name: n,
+    description: d.join(" "),
+    default: v,
+};
+MaybeValue: Option<ast::Value> = {
+    "=" <v:Value> => Some(v),
+    => None,
+}
+Value: ast::Value = {
+    <i: int> => ast::Value::Int(i),
+    <u: uint> => ast::Value::UInt(u),
+    <r: float> => ast::Value::Real(r),
+}
+
+Graph: ast::Graph = {
+    <n:Node> <p:OneOrMore<GraphPass, "+">> <s:Shape> "\n" => ast::Graph {
+        id: n,
+        passes: p,
+        inline: None,
+        shape: s,
+    },
+    <n:Node> <m:Model> => ast::Graph {
+        id: n,
+        passes: vec![ast::GraphPass {
+            name: m.name.clone(),
+            ..Default::default()
+        }],
+        inline: Some(m),
+        shape: None,
+    },
+}
+GraphPass: ast::GraphPass = {
+    <n:name+> <a:GraphPassArgs> <r:GraphPassRepeat> => ast::GraphPass {
+        name: n.join(" "),
+        args: a,
+        repeat: r,
+    },
+}
+GraphPassArgs: Vec<ast::GraphPassArg> = {
+    "(" <a:OneOrMore<GraphPassArg, ",">> ")" => a,
+    => vec![],
+}
+GraphPassArg: ast::GraphPassArg = {
+    <n:OneOrMore<Node, "+">> => ast::GraphPassArg::Node(n),
+    <n:name> "=" <v:Value> => ast::GraphPassArg::Keyword {
+        name: n,
+        value: v,
+    },
+}
+GraphPassRepeat: u64 = {
+    "*" <n:uint> => n,
+    => 1,
+}
+
+Shape: Option<ast::Shape> = {
+    "=" <d: OneOrMore<DimExpr, ",">> => Some(ast::Shape(d)),
+    => None,
+}
+DimExpr: ast::Dim = {
+    <lhs:DimExpr> "+" <rhs:DimTerm> => ast::Dim::Expr {
+        lhs: Box::new(lhs),
+        rhs: Box::new(rhs),
+        op: ast::DimOp::Add,
+    },
+    <lhs:DimExpr> "-" <rhs:DimTerm> => ast::Dim::Expr {
+        lhs: Box::new(lhs),
+        rhs: Box::new(rhs),
+        op: ast::DimOp::Sub,
+    },
+    <t:DimTerm> => t,
+}
+DimTerm: ast::Dim = {
+    <lhs:DimTerm> "*" <rhs:DimAtom> => ast::Dim::Expr {
+        lhs: Box::new(lhs),
+        rhs: Box::new(rhs),
+        op: ast::DimOp::Mul,
+    },
+    <lhs:DimTerm> "/" <rhs:DimAtom> => ast::Dim::Expr {
+        lhs: Box::new(lhs),
+        rhs: Box::new(rhs),
+        op: ast::DimOp::Div,
+    },
+    "(" <e:DimExpr> ")" => e,
+    <a:DimAtom> => a,
+}
+DimAtom: ast::Dim = {
+    <u:uint> => ast::Dim::Fixed(u),
+    <n:name> => ast::Dim::Semantic(n),
+}
+
+Node: u64 = "#" <u:uint> => u;
+
+#[inline]
+OneOrMore<T, S>: Vec<T> = {
+    <i1: T> <i2:(S T)*> S? => {
+        let mut items = vec![i1];
+        items.extend(i2.into_iter().map(|e| e.1));
+        items
+    }
+};
+
+// Hook external lexer:
+extern {
+    type Location = location::Location;
+    type Error = LexicalError;
+
+    enum lexer::Tok {
+        Indent => lexer::Tok::Indent,
+        Dedent => lexer::Tok::Dedent,
+        int => lexer::Tok::Int { value: <i64> },
+        uint => lexer::Tok::UInt { value: <u64> },
+        float => lexer::Tok::Float { value: <f64> },
+        string => lexer::Tok::String { value: <String> },
+        bytes => lexer::Tok::Bytes { value: <Vec<u8>> },
+        name => lexer::Tok::Name { name: <String> },
+        StartFile => lexer::Tok::StartFile,
+        "\n" => lexer::Tok::Newline,
+        "=" => lexer::Tok::Equal,
+        "#" => lexer::Tok::Number,
+        "." => lexer::Tok::Dot,
+        "," => lexer::Tok::Comma,
+        "(" => lexer::Tok::Lpar,
+        ")" => lexer::Tok::Rpar,
+        "[" => lexer::Tok::Lbracket,
+        "]" => lexer::Tok::Rbracket,
+        ":" => lexer::Tok::Colon,
+        "+" => lexer::Tok::Add,
+        "-" => lexer::Tok::Sub,
+        "*" => lexer::Tok::Mul,
+        "/" => lexer::Tok::Div,
+        "**" => lexer::Tok::Pow,
+        "--" => lexer::Tok::Seq,
+    }
+}
