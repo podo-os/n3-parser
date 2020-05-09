@@ -13,7 +13,7 @@ pub struct ModelInner {
 
 #[derive(Debug, Default)]
 pub struct Variable {
-    pub name: String,
+    pub name: Option<String>,
     pub description: String,
     pub default: Option<Value>,
 }
@@ -66,4 +66,11 @@ pub enum DimOp {
     Sub,
     Mul,
     Div,
+}
+
+pub mod temp {
+    pub struct VariableNameDesc {
+        pub name: Option<String>,
+        pub description: String,
+    }
 }

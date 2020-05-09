@@ -21,11 +21,21 @@ ModelInner: ast::ModelInner = {
     => ast::ModelInner::default(),
 }
 
-Variable: ast::Variable = "*" <n:name> ":" <d:name+> <v:MaybeValue> "\n" => ast::Variable {
-    name: n,
-    description: d.join(" "),
+Variable: ast::Variable = "*" <nd:VariableNameDesc> <v:MaybeValue> "\n" => ast::Variable {
+    name: nd.name,
+    description: nd.description,
     default: v,
 };
+VariableNameDesc: ast::temp::VariableNameDesc = {
+    <n:name> ":" <d:name+> => ast::temp::VariableNameDesc {
+        name: Some(n),
+        description: d.join(" "),
+    },
+    <d:name+> => ast::temp::VariableNameDesc {
+        name: None,
+        description: d.join(" "),
+    },
+}
 MaybeValue: Option<ast::Value> = {
     "=" <v:Value> => Some(v),
     => None,
@@ -114,6 +124,8 @@ DimAtom: ast::Dim = {
 
 Node: u64 = "#" <u:uint> => u;
 
+int: i64 = "-" <u:uint> => u as i64;
+
 #[inline]
 OneOrMore<T, S>: Vec<T> = {
     <i1: T> <i2:(S T)*> S? => {
@@ -131,7 +143,6 @@ extern {
     enum lexer::Tok {
         Indent => lexer::Tok::Indent,
         Dedent => lexer::Tok::Dedent,
-        int => lexer::Tok::Int { value: <i64> },
         uint => lexer::Tok::UInt { value: <u64> },
         float => lexer::Tok::Float { value: <f64> },
         string => lexer::Tok::String { value: <String> },

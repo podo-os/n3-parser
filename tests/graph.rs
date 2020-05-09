@@ -32,3 +32,16 @@ fn test_passing_pattern() {
 
   n3_parser::parser::parse_file(MODEL).unwrap();
 }
+
+#[test]
+fn test_residual_pattern() {
+  const MODEL: &str = "
+[ResidualBlockRoot]
+  [ResidualBlock]
+  #1 Conv2d + BatchNorm + ReLU
+  #2 Conv2d + BatchNorm
+  #3 Concat (#1, #2, D=1)
+";
+
+  n3_parser::parser::parse_file(MODEL).unwrap();
+}

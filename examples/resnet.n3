@@ -9,6 +9,7 @@
   [ResidualBlock]
     #1 Conv2d + BatchNorm + ReLU
     #2 Conv2d + BatchNorm
+    #3 Concat (#1, #2, D=1)
 
   #0 Input RGB image = 3, H, W
 
