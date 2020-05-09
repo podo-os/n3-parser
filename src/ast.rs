@@ -23,6 +23,7 @@ pub enum Value {
     Int(i64),
     UInt(u64),
     Real(f64),
+    Model(String),
 }
 
 #[derive(Debug, Default)]

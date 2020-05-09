@@ -44,6 +44,7 @@ Value: ast::Value = {
     <i: int> => ast::Value::Int(i),
     <u: uint> => ast::Value::UInt(u),
     <r: float> => ast::Value::Real(r),
+    <m: name+> => ast::Value::Model(m.join(" ")),
 }
 
 Graph: ast::Graph = {
