@@ -10,4 +10,4 @@ mod location;
 pub mod parser;
 mod token;
 
-lalrpop_mod!(pub n3); // synthesized by LALRPOP
+lalrpop_mod!(n3); // synthesized by LALRPOP
