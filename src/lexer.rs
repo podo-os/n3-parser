@@ -70,11 +70,11 @@ pub struct Lexer<T: Iterator<Item = char>> {
 }
 
 pub fn get_keywords() -> HashMap<String, Tok> {
-    // let mut keywords = HashMap::new();
+    let mut keywords = HashMap::new();
 
-    // keywords
-
-    HashMap::new()
+    keywords.insert("use".to_string(), Tok::Use);
+    keywords.insert("by".to_string(), Tok::By);
+    keywords
 }
 
 pub type Spanned = (Location, Tok, Location);

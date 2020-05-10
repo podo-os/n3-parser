@@ -5,7 +5,20 @@ use crate::location;
 
 grammar;
 
-pub InputFile: ast::Model = StartFile <m:Model> => m;
+pub InputFile: ast::File = StartFile <u:Use*> <m:Model> => ast::File {
+    uses: u,
+    model: m,
+};
+
+Use: ast::Use = "use" <m:name+> <o:UseOrigin> "\n" => ast::Use {
+    model: m.join(" "),
+    origin: o,
+};
+UseOrigin: ast::UseOrigin = {
+    "by" <s:string> => ast::UseOrigin::Site(s),
+    "by" <u:name+> => ast::UseOrigin::User(u.join(" ")),
+    => ast::UseOrigin::Local,
+}
 
 Model: ast::Model = "[" <n:name+> "]" "\n" <i:ModelInner> => ast::Model {
     name: n.join(" "),
@@ -166,5 +179,7 @@ extern {
         "/" => lexer::Tok::Div,
         "**" => lexer::Tok::Pow,
         "--" => lexer::Tok::Seq,
+        "use" => lexer::Tok::Use,
+        "by" => lexer::Tok::By,
     }
 }

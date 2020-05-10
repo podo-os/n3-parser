@@ -19,6 +19,6 @@ macro_rules! do_lalr_parsing {
     }};
 }
 
-pub fn parse_file(source: &str) -> Result<ast::Model, ParseError> {
+pub fn parse_file(source: &str) -> Result<ast::File, ParseError> {
     do_lalr_parsing!(source, InputFileParser, StartFile)
 }

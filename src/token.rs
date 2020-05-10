@@ -33,6 +33,8 @@ pub enum Tok {
     Div,
     Pow,
     Seq,
+    Use,
+    By,
 }
 
 impl fmt::Display for Tok {
@@ -80,6 +82,8 @@ impl fmt::Display for Tok {
             Div => f.write_str("'/'"),
             Pow => f.write_str("'**'"),
             Seq => f.write_str("'--'"),
+            Use => f.write_str("use"),
+            By => f.write_str("by"),
         }
     }
 }

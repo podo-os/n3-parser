@@ -1,4 +1,23 @@
 #[derive(Debug, Default)]
+pub struct File {
+    pub uses: Vec<Use>,
+    pub model: Model,
+}
+
+#[derive(Debug)]
+pub struct Use {
+    pub model: String,
+    pub origin: UseOrigin,
+}
+
+#[derive(Debug)]
+pub enum UseOrigin {
+    Site(String),
+    User(String),
+    Local,
+}
+
+#[derive(Debug, Default)]
 pub struct Model {
     pub name: String,
     pub inner: ModelInner,
