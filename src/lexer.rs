@@ -74,6 +74,7 @@ pub fn get_keywords() -> HashMap<String, Tok> {
 
     keywords.insert("use".to_string(), Tok::Use);
     keywords.insert("by".to_string(), Tok::By);
+    keywords.insert("extern".to_string(), Tok::Extern);
     keywords
 }
 

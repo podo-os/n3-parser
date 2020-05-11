@@ -35,6 +35,7 @@ pub enum Tok {
     Seq,
     Use,
     By,
+    Extern,
 }
 
 impl fmt::Display for Tok {
@@ -84,6 +85,7 @@ impl fmt::Display for Tok {
             Seq => f.write_str("'--'"),
             Use => f.write_str("use"),
             By => f.write_str("by"),
+            Extern => f.write_str("extern"),
         }
     }
 }

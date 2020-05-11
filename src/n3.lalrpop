@@ -20,10 +20,15 @@ UseOrigin: ast::UseOrigin = {
     => ast::UseOrigin::Local,
 }
 
-Model: ast::Model = "[" <n:name+> "]" "\n" <i:ModelInner> => ast::Model {
+Model: ast::Model = <e:IsExtern> "[" <n:name+> "]" "\n" <i:ModelInner> => ast::Model {
     name: n.join(" "),
     inner: i,
+    is_extern: e,
 };
+IsExtern: bool = {
+    "extern" => true,
+    => false,
+}
 
 ModelInner: ast::ModelInner = {
     Indent <v:Variable*> <c:Model*> <g:Graph*> Dedent => ast::ModelInner {
@@ -181,5 +186,6 @@ extern {
         "--" => lexer::Tok::Seq,
         "use" => lexer::Tok::Use,
         "by" => lexer::Tok::By,
+        "extern" => lexer::Tok::Extern,
     }
 }

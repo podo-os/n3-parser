@@ -21,6 +21,7 @@ pub enum UseOrigin {
 pub struct Model {
     pub name: String,
     pub inner: ModelInner,
+    pub is_extern: bool,
 }
 
 #[derive(Debug, Default)]
