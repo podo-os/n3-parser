@@ -14,7 +14,7 @@ fn test_inline_passes() {
 #[test]
 fn test_keyword_args() {
   const MODEL: &str = "
-[InlinePassing]
+[CustomModel]
 
   [Conv2d]
     * K: kernel size = 3
@@ -25,6 +25,18 @@ fn test_keyword_args() {
   #3 Conv2d (#2, K=5)
   #4 Conv2d (#3)
   #5 Conv2d
+";
+
+  n3_parser::parser::parse_file(MODEL).unwrap();
+}
+
+#[test]
+fn test_keyword_bool_args() {
+  const MODEL: &str = "
+[Transform]
+
+  #0 dynamic (transform=yes)
+  #1 dynamic
 ";
 
   n3_parser::parser::parse_file(MODEL).unwrap();

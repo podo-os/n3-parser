@@ -40,6 +40,7 @@ pub struct Variable {
 
 #[derive(Debug)]
 pub enum Value {
+    Bool(bool),
     Int(i64),
     UInt(u64),
     Real(f64),

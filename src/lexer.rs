@@ -72,6 +72,9 @@ pub struct Lexer<T: Iterator<Item = char>> {
 pub fn get_keywords() -> HashMap<String, Tok> {
     let mut keywords = HashMap::new();
 
+    keywords.insert("yes".to_string(), Tok::BoolYes);
+    keywords.insert("no".to_string(), Tok::BoolNo);
+
     keywords.insert("use".to_string(), Tok::Use);
     keywords.insert("by".to_string(), Tok::By);
     keywords.insert("extern".to_string(), Tok::Extern);

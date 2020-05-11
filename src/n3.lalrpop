@@ -59,6 +59,7 @@ MaybeValue: Option<ast::Value> = {
     => None,
 }
 Value: ast::Value = {
+    <b: Bool> => ast::Value::Bool(b),
     <i: int> => ast::Value::Int(i),
     <u: uint> => ast::Value::UInt(u),
     <r: float> => ast::Value::Real(r),
@@ -145,6 +146,11 @@ Node: u64 = "#" <u:uint> => u;
 
 int: i64 = "-" <u:uint> => u as i64;
 
+Bool: bool = {
+    "yes" => true,
+    "no" => false,
+}
+
 #[inline]
 OneOrMore<T, S>: Vec<T> = {
     <i1: T> <i2:(S T)*> S? => {
@@ -184,6 +190,8 @@ extern {
         "/" => lexer::Tok::Div,
         "**" => lexer::Tok::Pow,
         "--" => lexer::Tok::Seq,
+        "yes" => lexer::Tok::BoolYes,
+        "no" => lexer::Tok::BoolNo,
         "use" => lexer::Tok::Use,
         "by" => lexer::Tok::By,
         "extern" => lexer::Tok::Extern,
