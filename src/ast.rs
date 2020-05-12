@@ -31,14 +31,14 @@ pub struct ModelInner {
     pub graph: Vec<Graph>,
 }
 
-#[derive(Debug, Default)]
+#[derive(Clone, Debug, Default)]
 pub struct Variable {
     pub name: Option<String>,
     pub description: String,
     pub default: Option<Value>,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Value {
     Bool(bool),
     Int(i64),
@@ -62,7 +62,7 @@ pub struct GraphPass {
     pub repeat: u64,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum GraphPassArg {
     Node(Vec<u64>),
     Keyword { name: String, value: Value },
@@ -71,7 +71,7 @@ pub enum GraphPassArg {
 #[derive(Debug, Default)]
 pub struct Shape(pub Vec<Dim>);
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Dim {
     Fixed(u64),
     Semantic(String),
@@ -82,7 +82,7 @@ pub enum Dim {
     },
 }
 
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug)]
 pub enum DimOp {
     Add,
     Sub,
