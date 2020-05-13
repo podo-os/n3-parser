@@ -68,6 +68,25 @@ pub enum GraphPassArg {
     Keyword { name: String, value: Value },
 }
 
+impl GraphPassArg {
+    pub fn is_named(&self, name: &str) -> bool {
+        match self {
+            Self::Keyword {
+                name: k_name,
+                value: _,
+            } => name == k_name,
+            _ => false,
+        }
+    }
+
+    pub fn unwrap_value(&self) -> Value {
+        match self {
+            Self::Keyword { name: _, value } => value.clone(),
+            _ => unreachable!(),
+        }
+    }
+}
+
 #[derive(Debug, Default)]
 pub struct Shape(pub Vec<Dim>);
 
