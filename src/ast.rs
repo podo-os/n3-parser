@@ -79,9 +79,16 @@ impl GraphPassArg {
         }
     }
 
-    pub fn unwrap_value(&self) -> Value {
+    pub fn unwrap_name(&self) -> &str {
         match self {
-            Self::Keyword { name: _, value } => value.clone(),
+            Self::Keyword { name, value: _ } => name,
+            _ => unreachable!(),
+        }
+    }
+
+    pub fn unwrap_value(&self) -> &Value {
+        match self {
+            Self::Keyword { name: _, value } => value,
             _ => unreachable!(),
         }
     }
