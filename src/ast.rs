@@ -36,6 +36,7 @@ pub struct Variable {
     pub name: Option<String>,
     pub description: String,
     pub default: Option<Value>,
+    pub is_model: bool,
 }
 
 #[derive(Clone, Debug)]

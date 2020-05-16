@@ -39,10 +39,19 @@ ModelInner: ast::ModelInner = {
     => ast::ModelInner::default(),
 }
 
-Variable: ast::Variable = "*" <nd:VariableNameDesc> <v:MaybeValue> "\n" => ast::Variable {
-    name: nd.name,
-    description: nd.description,
-    default: v,
+Variable: ast::Variable = {
+    "*" <nd:VariableNameDesc> <v:MaybeValue> "\n" => ast::Variable {
+        name: nd.name,
+        description: nd.description,
+        default: v,
+        is_model: false,
+    },
+    "*" "[" <nd:VariableNameDesc> "]" <v:MaybeValueModel> "\n" => ast::Variable {
+        name: nd.name,
+        description: nd.description,
+        default: v,
+        is_model: true,
+    },
 };
 VariableNameDesc: ast::temp::VariableNameDesc = {
     <n:name> ":" <d:name+> => ast::temp::VariableNameDesc {
@@ -58,12 +67,15 @@ MaybeValue: Option<ast::Value> = {
     "=" <v:Value> => Some(v),
     => None,
 }
+MaybeValueModel: Option<ast::Value> = {
+    "=" <m: name+> => Some(ast::Value::Model(m.join(" "))),
+    => None,
+}
 Value: ast::Value = {
     <b: Bool> => ast::Value::Bool(b),
     <i: int> => ast::Value::Int(i),
     <u: uint> => ast::Value::UInt(u),
     <r: float> => ast::Value::Real(r),
-    <m: name+> => ast::Value::Model(m.join(" ")),
 }
 
 Graph: ast::Graph = {
