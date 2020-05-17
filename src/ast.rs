@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 #[derive(Debug, Default)]
 pub struct File {
     pub uses: Vec<Use>,
@@ -50,10 +52,10 @@ pub enum Value {
 
 #[derive(Debug, Default)]
 pub struct Graph {
-    pub id: u64,
+    pub id: Node,
     pub passes: Vec<GraphPass>,
     pub inline: Option<Model>,
-    pub shape: Option<Shape>,
+    pub shapes: Option<Shapes>,
 }
 
 #[derive(Debug, Default)]
@@ -65,7 +67,7 @@ pub struct GraphPass {
 
 #[derive(Clone, Debug)]
 pub enum GraphPassArg {
-    Node(Vec<u64>),
+    NodeArg(Vec<NodeArg>),
     Keyword { name: String, value: Value },
 }
 
@@ -92,6 +94,19 @@ impl GraphPassArg {
             Self::Keyword { name: _, value } => value,
             _ => unreachable!(),
         }
+    }
+}
+
+#[derive(Debug, Default)]
+pub struct Shapes(pub HashMap<Node, Shape>);
+
+impl Shapes {
+    pub(crate) fn one(shape: Shape) -> Self {
+        Self(vec![(0u64, shape)].into_iter().collect())
+    }
+
+    pub(crate) fn many(shapes: Vec<(u64, Shape)>) -> Self {
+        Self(shapes.into_iter().collect())
     }
 }
 
@@ -123,3 +138,11 @@ pub mod temp {
         pub description: String,
     }
 }
+
+#[derive(Copy, Clone, Debug)]
+pub struct NodeArg {
+    pub node: Node,
+    pub arg: Node,
+}
+
+pub type Node = u64;

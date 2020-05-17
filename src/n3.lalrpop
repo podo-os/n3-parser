@@ -79,11 +79,11 @@ Value: ast::Value = {
 }
 
 Graph: ast::Graph = {
-    <n:Node> <p:OneOrMore<GraphPass, "+">> <s:Shape> "\n" => ast::Graph {
+    <n:Node> <p:OneOrMore<GraphPass, "+">> <s:Shapes> "\n" => ast::Graph {
         id: n,
         passes: p,
         inline: None,
-        shape: s,
+        shapes: s,
     },
     <n:Node> <m:Model> => ast::Graph {
         id: n,
@@ -92,7 +92,7 @@ Graph: ast::Graph = {
             ..Default::default()
         }],
         inline: Some(m),
-        shape: None,
+        shapes: None,
     },
 }
 GraphPass: ast::GraphPass = {
@@ -107,7 +107,7 @@ GraphPassArgs: Vec<ast::GraphPassArg> = {
     => vec![],
 }
 GraphPassArg: ast::GraphPassArg = {
-    <n:OneOrMore<Node, "+">> => ast::GraphPassArg::Node(n),
+    <n:OneOrMore<NodeArg, "+">> => ast::GraphPassArg::NodeArg(n),
     <n:name> "=" <v:Value> => ast::GraphPassArg::Keyword {
         name: n,
         value: v,
@@ -118,10 +118,13 @@ GraphPassRepeat: u64 = {
     => 1,
 }
 
-Shape: Option<ast::Shape> = {
-    "=" <d: OneOrMore<DimExpr, ",">> => Some(ast::Shape(d)),
+Shapes: Option<ast::Shapes> = {
+    "=" <s: OneOrMore<IndexedShape, ",">> => Some(ast::Shapes::many(s)),
+    "=" <s: Shape> => Some(ast::Shapes::one(s)),
     => None,
 }
+IndexedShape: (u64, ast::Shape) = "[" <i: uint> ":" <s: Shape> "]" => (i, s);
+Shape: ast::Shape = <d: OneOrMore<DimExpr, ",">> => ast::Shape(d);
 DimExpr: ast::Dim = {
     <lhs:DimExpr> "+" <rhs:DimTerm> => ast::Dim::Expr {
         lhs: Box::new(lhs),
@@ -154,7 +157,17 @@ DimAtom: ast::Dim = {
     <n:name> => ast::Dim::Semantic(n),
 }
 
-Node: u64 = "#" <u:uint> => u;
+Node: ast::Node = "#" <u:uint> => u;
+NodeArg: ast::NodeArg = {
+    <n: Node> ":" <a: uint> => ast::NodeArg {
+        node: n,
+        arg: a,
+    },
+    <n: Node> => ast::NodeArg {
+        node: n,
+        arg: 0,
+    },
+};
 
 int: i64 = "-" <u:uint> => u as i64;
 

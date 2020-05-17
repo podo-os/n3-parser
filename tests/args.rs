@@ -41,3 +41,17 @@ fn test_keyword_bool_args() {
 
   n3_parser::parser::parse_file(MODEL).unwrap();
 }
+
+#[test]
+fn test_multiple_inputs() {
+  const MODEL: &str = "
+[Reduce]
+
+  #0 fixed = [0: 42], [1: 24],
+  #1 Linear (#0:0) = 12
+  #2 Linear (#0:1) = 23
+  #3 Join (#1, #2) = 35
+";
+
+  n3_parser::parser::parse_file(MODEL).unwrap();
+}
