@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 #[derive(Debug, Default)]
 pub struct File {
@@ -98,7 +98,7 @@ impl GraphPassArg {
 }
 
 #[derive(Debug, Default)]
-pub struct Shapes(pub HashMap<Node, Shape>);
+pub struct Shapes(pub BTreeMap<Node, Shape>);
 
 impl Shapes {
     pub(crate) fn one(shape: Shape) -> Self {
