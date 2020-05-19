@@ -89,6 +89,7 @@ Graph: ast::Graph = {
         id: n,
         passes: vec![ast::GraphPass {
             name: m.name.clone(),
+            repeat: 1,
             ..Default::default()
         }],
         inline: Some(m),
