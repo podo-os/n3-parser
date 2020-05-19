@@ -1,17 +1,23 @@
 use std::collections::BTreeMap;
 
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
+
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Default)]
 pub struct File {
     pub uses: Vec<Use>,
     pub model: Model,
 }
 
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug)]
 pub struct Use {
     pub model: String,
     pub origin: UseOrigin,
 }
 
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug)]
 pub enum UseOrigin {
     Site(String),
@@ -19,6 +25,7 @@ pub enum UseOrigin {
     Local,
 }
 
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Default)]
 pub struct Model {
     pub name: String,
@@ -26,6 +33,7 @@ pub struct Model {
     pub is_extern: bool,
 }
 
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Default)]
 pub struct ModelInner {
     pub variables: Vec<Variable>,
@@ -33,6 +41,7 @@ pub struct ModelInner {
     pub graph: Vec<Graph>,
 }
 
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Clone, Debug, Default)]
 pub struct Variable {
     pub name: Option<String>,
@@ -41,6 +50,7 @@ pub struct Variable {
     pub is_model: bool,
 }
 
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Clone, Debug)]
 pub enum Value {
     Bool(bool),
@@ -50,6 +60,7 @@ pub enum Value {
     Model(String),
 }
 
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Default)]
 pub struct Graph {
     pub id: Node,
@@ -58,6 +69,7 @@ pub struct Graph {
     pub shapes: Option<Shapes>,
 }
 
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Default)]
 pub struct GraphPass {
     pub name: String,
@@ -65,6 +77,7 @@ pub struct GraphPass {
     pub repeat: u64,
 }
 
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Clone, Debug)]
 pub enum GraphPassArg {
     NodeArg(Vec<NodeArg>),
@@ -97,6 +110,7 @@ impl GraphPassArg {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Default)]
 pub struct Shapes(pub BTreeMap<Node, Shape>);
 
@@ -110,9 +124,11 @@ impl Shapes {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Default)]
 pub struct Shape(pub Vec<Dim>);
 
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Clone, Debug)]
 pub enum Dim {
     Fixed(u64),
@@ -124,6 +140,7 @@ pub enum Dim {
     },
 }
 
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug)]
 pub enum DimOp {
     Add,
@@ -139,6 +156,7 @@ pub mod temp {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug)]
 pub struct NodeArg {
     pub node: Node,
