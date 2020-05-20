@@ -51,7 +51,7 @@ pub struct Variable {
 }
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Value {
     Bool(bool),
     Int(i64),
